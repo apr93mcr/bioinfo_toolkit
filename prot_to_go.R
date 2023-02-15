@@ -1,10 +1,10 @@
-#This function requires clusterProfiler package org.Hs.eg.db, and ggplot2
-#prot_list must be a dataframe column or a vector containing a list of proteins or gene symbols
-#From_type indicates thy type of gene symbols (SYMBOL) or uniprots ID ("UNIPROT") included in your protein list
-#from_Type: possible option for from_Type: "UNIPROT","ENTREZID","ENSEMBL"
-#simply_score: reduce the redundancy of GO terms (descending order), lower simply_score remove more redundant GO terms
-#Min size evaluate the minimun of overlaping genes between you set and a given GO term
-#When plot=T generates a ggplot barchar version depicting the GO terms and -log10(adjusted pvalue)
+#This function requires clusterProfiler, org.Hs.eg.db, and ggplot2 packages dependencies.
+#prot_list must be a dataframe column or a vector containing a list of proteins or gene symbols.
+#From_type indicates thy type of gene symbols (SYMBOL) or uniprots ID ("UNIPROT") included in your protein list.
+#from_Type: possible option for from_Type: "UNIPROT","ENTREZID","ENSEMBL".
+#simply_score: reduce the redundancy of GO terms (descending order), lower simply_score remove more redundant GO terms, ending with less redundant GO terms.
+#Min size evaluate the minimun of overlaping genes between you set and a given GO term.
+#When plot=T generates a ggplot barchar version depicting the GO terms and -log10(adjusted pvalue) for GO enriched term.
 
 prot_to_go <- function(prot_list, from_Type="SYMBOL", min_size=5, simply_score=0.5, GO_onto=c("BP","MF","CC"), plot=F){
   
