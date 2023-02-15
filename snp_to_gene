@@ -1,0 +1,41 @@
+#This function is wrap-up function for the biomaRt (available in bioconductor)
+#The function requires the biomaRt packages and their dependencies
+#As input it requires a data frame containing a column with SNPs rs identifyers.
+#The function returns the same data frame with the hgnc symbol located in this snps in combination with chromosome location information (chromosome number, start and end)
+#This funciton is useful while depicting mahattan plots top snps.
+
+function_snp_to_gene <- function(x) {
+  
+  if(length(x$SNP)==0 | is.null(x)){
+    stop("None SNPs were introduce")}
+  
+  if(length(x$SNP)!=0){
+    
+    library(biomaRt)
+    mart.snp <- useMart("ENSEMBL_MART_SNP",dataset = "hsapiens_snp")
+    ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+    
+    x2 <- getBM(attributes = c("refsnp_id", "chr_name", "chrom_start", "chrom_end","allele", "ensembl_gene_stable_id","ensembl_gene_name","associated_gene"),
+                filters="snp_filter", values=as.character(x$SNP), mart=mart.snp, uniqueRows=TRUE)
+    
+    G_list <- getBM(attributes=c("ensembl_gene_id",'hgnc_symbol'), filters = 'ensembl_gene_id', values = x2$ensembl_gene_stable_id, mart = ensembl)
+    
+    test <- merge(x2, G_list, by.x="ensembl_gene_stable_id", by.y="ensembl_gene_id",all.x = T)
+    
+    test <- test[!duplicated(test$refsnp_id),]
+    test <- as.data.frame(lapply(test, function(x) ifelse(x=="",NA,x)))
+    
+    for(i in 1:nrow(test)){
+      
+      if(is.na(test[i,"associated_gene"]) & !is.na(test[i,"hgnc_symbol"])) {test[i,"associated_gene"] <- test[i,"hgnc_symbol"] }
+      
+      if(!is.na(test[i,"associated_gene"]) & is.na(test[i,"hgnc_symbol"])) {test[i,"hgnc_symbol"] <- test[i,"associated_gene"] }
+      
+    }
+    
+    x <- merge(x,test[,c("refsnp_id","hgnc_symbol")],by.x = "SNP",by.y ="refsnp_id")
+    
+    return(x)
+  }
+  
+}
