@@ -4,7 +4,7 @@
 #from_Type: possible option for from_Type: "UNIPROT","ENTREZID","ENSEMBL".
 #simply_score: reduce the redundancy of GO terms (descending order), lower simply_score remove more redundant GO terms, ending with less redundant GO terms.
 #Min size evaluate the minimun of overlaping genes between you set and a given GO term.
-#When plot=T generates a ggplot barchar version depicting the GO terms and -log10(adjusted pvalue) for GO enriched term.
+#When plot=T generates a dotplot barchar version depicting the GO terms and -log10(adjusted pvalue) for GO enriched term.
 
 prot_to_go <- function(prot_list, from_Type="SYMBOL", min_size=5, simply_score=0.5, GO_onto=c("BP","MF","CC"), plot=F){
   
