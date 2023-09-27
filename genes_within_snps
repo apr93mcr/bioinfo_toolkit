@@ -1,0 +1,31 @@
+genes_within_SNPs <- function(snp_pos){
+  
+  library(Homo.sapiens)
+  library(dplyr)
+  mycoords.gr = lapply(snp_pos, function (x) {res=strsplit(x, ':')}) %>%
+    unlist %>%
+    as.numeric %>%
+    matrix(ncol=3, byrow=T) %>%
+    as.data.frame %>%
+    dplyr::select(chrom=V1, start=V2, end=V3) %>%
+    mutate(chrom=paste0('chr', chrom)) %>%
+    makeGRangesFromDataFrame
+  
+  #subsetByOverlaps(genes(TxDb.Hsapiens.UCSC.hg19.knownGene), mycoords.gr)
+  gene_list <- subsetByOverlaps(genes(TxDb.Hsapiens.UCSC.hg19.knownGene), mycoords.gr)
+  names_of_genes <- names(gene_list)
+  
+  #as.data.frame(org.Hs.egSYMBOL)
+  
+  library(biomaRt)
+  mart <- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
+  
+  G_list <- getBM(filters= "entrezgene_id", attributes= c("entrezgene_id","hgnc_symbol"),values=gene_list$gene_id,mart= mart)
+  #merge(df,G_list,by.x="gene",by.y="ensembl_peptide_id")
+  return(G_list)
+  
+}
+
+#Example
+#snp_pos_list <- "1:169469142:170469142" 
+#genes_within_SNPs(snp_pos = snp_pos_list)
